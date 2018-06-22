@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="WL_WEB:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/WL_WEB_war</output-path>
+    <root id="archive" name="WL_WEB_war.war">
+      <element id="artifact" artifact-name="WL_WEB:war exploded" />
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	<context:component-scan base-package="cn.hjd"/><!--【扫描的方式】将类放入spring容器中  -->
+		<!--上面的注解隐式包含了此注解的： 	<context:annotation-config/> -->
+	<!--配置数据源  -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/wl"/>
+		<property name="user" value="root"/>
+		<property name="password" value="hjd"/>
+		<!--初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="initialPoolSize" value="1"/>
+		<!--连接池中保留的最小连接数。-->
+		<property name="minPoolSize" value="1"/>	
+		<!--连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="300"/>
+		<!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+		<property name="maxIdleTime" value="60"/>	
+		<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+		<property name="acquireIncrement" value="5"/>	
+		<!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+		<property name="idleConnectionTestPeriod" value="60"/>
+	</bean>
+	
+	<!--配属hibernate的 sessinfactory的管理  -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/><!--加载数据源  -->
+		 <property name="mappingResources"><!--指定hibernate的映射文件  -->
+			    <list>
+			      <value>cn/hjd/bean/Employee.hbm.xml</value>
+			    </list>
+		</property>
+		 <property name="hibernateProperties"><!--指定hibernate属性  -->
+			 <value>
+			     
+			    
+			      hibernate.show_sql=false
+			      hibernate.format_sql=false
+			  </value>
+		 </property>
+	</bean>
+	
+	<!--配置spring的事务管理器，（底层还是需要session来进行管理的，所以还是需要hibernate）  -->
+	<bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/><!--将sessionfactory注入里面，从而获取到事务的管理  -->
+	</bean>
+	
+	<!--使用基于【注解】方式配置事务 -->
+	<tx:annotation-driven transaction-manager="txManager"/>
+	
+	<!--配置事务 事务细节 ：事务的传播特性  
+    <tx:advice id="txadvice" transaction-manager="transactionManager">   
+        <tx:attributes>   
+            <tx:method name="add*" propagation="REQUIRED" rollback-for="Exception"/>   
+            <tx:method name="modify*" propagation="REQUIRED" no-rollback-for="myException"/>   
+            <tx:method name="del*" propagation="REQUIRED"/>   
+            <tx:method name="*" read-only="true"/>   
+        </tx:attributes>   
+    </tx:advice>   
+    配置参与事务的类   
+    <aop:config>   
+        <aop:pointcut expression="execution(* com.lzq.dao.*.*(..))" id="daoMethod"/>   
+        <aop:advisor advice-ref="txadvice" pointcut-ref="daoMethod"/>   
+    </aop:config>    -->
+</beans>

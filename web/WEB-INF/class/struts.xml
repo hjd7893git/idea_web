@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 默认的视图主题 -->
+    <constant name="struts.ui.theme" value="simple" />
+	<!-- struts.objectFactory这个属性用于说明Struts2的对象池创建工厂，
+	Struts2也有自己的对象池，就像Spring那样，在配置文件中你可以引用对象池中的对象，
+	你可以借助于Spring中的对象池，当想要得到Spring中的对象池时，申明struts.objectFactory为Spring
+	的对象池构建工厂...【struts工厂交给spring创建和维护】 -->
+	 <constant name="struts.objectFactory" value="spring" />
+	
+	 <package name="employee" namespace="/employee" extends="struts-default">
+	 	<action name="list" class="employeeAction"><!--从Spring容器中获取已经创建好好的action类  -->
+	 		<result name="list">/WEB-INF/page/employee.jsp</result>
+	 	</action>
+	 	
+	 	<action name="manage_*" class="employeeManageAction" method="{1}">
+	 		<result name="add">/WEB-INF/page/employeeAdd.jsp</result>
+	 		<result name="find" >/WEB-INF/page/find.jsp</result>
+	 		<result name="nofind" >/WEB-INF/page/nofind.jsp</result>
+	 	</action>
+	 	
+	 	<action name="xiu" class="qq" method="execute">
+	 	</action>
+	 	<action name="add" class="Add" method="execute">
+	 	</action>
+	 </package>
+</struts>
